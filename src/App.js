@@ -7,7 +7,10 @@ class App extends Component {
     super(props);
     this.state = {
         squares: Array(9).fill(null),
-        count: 0
+        count: 0,
+        symbol: 0,
+        x: 0,
+        o: 0
     }
     this.winnerLine = [
       [0, 1, 2],
@@ -23,40 +26,66 @@ class App extends Component {
   }
 
   isWinner = (s) => {
+    const { x, o } = this.state;
     for (let i = 0; i < this.winnerLine.length; i++) {
       let line = this.winnerLine[i];
       if (this.state.squares[line[0]] === s 
         && this.state.squares[line[1]] === s
         && this.state.squares[line[2]] === s) {
-          alert(s + ' win');
-          setTimeout(() => {
-            this.setState({squares: Array(9).fill(null)});
-            this.setState({count: 0});
-          }, 3000)
+          console.log('[s]', s);
+          (s === 'X') ? this.setState({x: x + 1}) : this.setState({o: o + 1});
+          return setTimeout(() => alert(s + ' win'), 1000)
+          
         }
+      else if (this.state.count === 8) alert('Ничья');
     }
+    
+    
   }
 
 
   clickHandler = (e) => {
     let data = e.target.getAttribute('data');
-    let { squares, count } = this.state;
+    let { squares, count, symbol } = this.state;
+    
+
     if (squares[data] === null) {
-      squares[data] = (count % 2 === 0) ? 'X' : '0';
+      squares[data] = ( symbol % 2 === 0) ? 'X' : '0';
 
       this.setState({
         squares: squares,
-        count: count + 1
-      });}
+        count: count + 1,
+        symbol: symbol + 1
+      });
+    }
     else {
       alert('Так нельзя')
     }
 
     this.isWinner(squares[data]);
+    return
   }
+
+  newGame = () => {  
+    let answer = prompt('Choose X or O').toLowerCase();
+
+    if (answer === 'o' || answer === 'о') {this.setState({symbol: 1});}
+    else if (answer === 'x') {this.setState({symbol: 0});}
+
+    this.setState({squares: Array(9).fill(null)});
+    this.setState({count: 0});
+    // this.setState({symbol: 0});
+  }
+
 
     render() {
         return (
+          <div>
+            <div>
+              <h1>X win={this.state.x}</h1>
+              <h1>O win={this.state.o}</h1>
+
+            </div>
             <div className="App">
                 <div 
                   onClick={this.clickHandler}
@@ -105,6 +134,14 @@ class App extends Component {
                 >{this.state.squares[8]}</div>
                   
             </div>
+            <div>
+              <p>Для выбора "Х" или "О" и начала новой игры Нажмите на кнопку</p>
+
+            </div>
+            <button
+              onClick={this.newGame}
+            >New Game</button>
+          </div>
         );
     }
 }
