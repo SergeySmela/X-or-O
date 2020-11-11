@@ -10,7 +10,8 @@ class App extends Component {
         count: 0,
         symbol: 0,
         x: 0,
-        o: 0
+        o: 0,
+        victory: 0
     }
     this.winnerLine = [
       [0, 1, 2],
@@ -33,11 +34,17 @@ class App extends Component {
         && this.state.squares[line[1]] === s
         && this.state.squares[line[2]] === s) {
           console.log('[s]', s);
-          (s === 'X') ? this.setState({x: x + 1}) : this.setState({o: o + 1});
-          return setTimeout(() => alert(s + ' win'), 1000)
-          
+          (s === 'X') 
+          ? this.setState({x: x + 1}) 
+          : this.setState({o: o + 1});
+          alert(s + ' win');
+          this.setState({victory: 1});
         }
-      else if (this.state.count === 8) alert('Ничья');
+      else if (
+        this.state.victory === 0 &&
+        this.state.count === 8) {
+          alert('Ничья');
+          return}
     }
     
     
@@ -45,11 +52,12 @@ class App extends Component {
 
 
   clickHandler = (e) => {
+    
     let data = e.target.getAttribute('data');
-    let { squares, count, symbol } = this.state;
+    let { squares, count, symbol, victory } = this.state;
     
 
-    if (squares[data] === null) {
+    if (squares[data] === null && victory === 0) {
       squares[data] = ( symbol % 2 === 0) ? 'X' : '0';
 
       this.setState({
@@ -57,24 +65,30 @@ class App extends Component {
         count: count + 1,
         symbol: symbol + 1
       });
+      console.log('[count]', count);
     }
     else {
       alert('Так нельзя')
     }
-
+    // if (this.isWinner(squares[data]) !== false) {
     this.isWinner(squares[data]);
-    return
+    // return
   }
 
-  newGame = () => {  
-    let answer = prompt('Choose X or O').toLowerCase();
-
-    if (answer === 'o' || answer === 'о') {this.setState({symbol: 1});}
-    else if (answer === 'x') {this.setState({symbol: 0});}
-
+  newGame = () => {   
     this.setState({squares: Array(9).fill(null)});
-    this.setState({count: 0});
+    this.setState({count: 0,
+                    victory: 0});
     // this.setState({symbol: 0});
+  }
+
+  selectPlayer = (e) => {
+    let answer = e.target.textContent.toLowerCase();
+    let selectPlayer = document.querySelector('.selectPlayer');
+    selectPlayer.textContent = answer;
+
+    if (answer === 'o') {this.setState({symbol: 1});}
+    else if (answer === 'x') {this.setState({symbol: 0});}
   }
 
 
@@ -135,12 +149,24 @@ class App extends Component {
                   
             </div>
             <div>
-              <p>Для выбора "Х" или "О" и начала новой игры Нажмите на кнопку</p>
+              <p>Для выбора кто ходит первый "Х" или "О"  Нажмите на кнопку</p>
+              <p>Первый ходит : <b className='selectPlayer'></b></p>
+              <div
+                onClick={this.selectPlayer}
+                className='exel'
+              >X</div>
+
+              <div
+                onClick={this.selectPlayer}
+                className='exel'
+              >O</div>
 
             </div>
+            <p>Для  начала Новой Игры</p>
             <button
               onClick={this.newGame}
-            >New Game</button>
+            >New Game
+            </button>
           </div>
         );
     }

@@ -16,7 +16,17 @@
   height: 50px;
   border: 1px solid pink;
   box-sizing: border-box;
-  
+  transition: background-color 300ms ease;
 }
 
+.exel:hover {
+  background-color: hsla(150, 100%, 45%, 0.322);
+  cursor: pointer;
+}
+
+.selectPlayer {
+  color: magenta;
+  font-style: italic;
+  font-size: large;
+}
 
